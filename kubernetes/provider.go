@@ -107,6 +107,7 @@ func Provider() terraform.ResourceProvider {
 			"kubernetes_secret":        dataSourceKubernetesSecret(),
 			"kubernetes_service":       dataSourceKubernetesService(),
 			"kubernetes_storage_class": dataSourceKubernetesStorageClass(),
+			"kubernetes_namespace":     dataSourceKubernetesNamespace(),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{

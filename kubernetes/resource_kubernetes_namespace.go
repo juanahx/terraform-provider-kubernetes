@@ -27,6 +27,11 @@ func resourceKubernetesNamespace() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"metadata": metadataSchema("namespace", true),
+			"name": {
+				Type:        schema.TypeString,
+				Description: "Namespace Name",
+				Computed:    true,
+			},
 		},
 	}
 }
@@ -61,6 +66,10 @@ func resourceKubernetesNamespaceRead(d *schema.ResourceData, meta interface{}) e
 	}
 	log.Printf("[INFO] Received namespace: %#v", namespace)
 	err = d.Set("metadata", flattenMetadata(namespace.ObjectMeta))
+	if err != nil {
+		return err
+	}
+	err = d.Set("name", namespace.ObjectMeta.Name)
 	if err != nil {
 		return err
 	}
