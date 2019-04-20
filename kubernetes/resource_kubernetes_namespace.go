@@ -77,6 +77,33 @@ func resourceKubernetesNamespaceRead(d *schema.ResourceData, meta interface{}) e
 	return nil
 }
 
+func resourceKubernetesNamespaceExistsRead(d *schema.ResourceData, meta interface{}) error {
+	conn := meta.(*kubernetes.Clientset)
+
+	name := d.Id()
+	log.Printf("[INFO] Reading namespace %s", name)
+
+	namespaceExists := true
+	namespace, err := conn.CoreV1().Namespaces().Get(name, meta_v1.GetOptions{})
+	if err != nil {
+		log.Printf("[DEBUG] Received error: %#v", err)
+		if errors.IsNotFound(err) {
+			log.Printf("namespace %s not found\n", namespace)
+			namespaceExists = false
+		} else {
+			return err
+		}
+	}
+	log.Printf("[INFO] Received namespace: %#v", namespace)
+
+	err = d.Set("exists", namespaceExists)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func resourceKubernetesNamespaceUpdate(d *schema.ResourceData, meta interface{}) error {
 	conn := meta.(*kubernetes.Clientset)
 
